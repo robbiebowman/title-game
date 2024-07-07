@@ -1,24 +1,35 @@
-package org.example
-
-import com.robbiebowman.Dictionary
-import org.example.com.robbiebowman.SemanticAnaliser
-import org.example.com.robbiebowman.TitleChanger
-import org.example.com.robbiebowman.Utils
+package com.robbiebowman
 
 fun main() {
+    // Set up dependencies
     val dictionary = Dictionary()
     val titleChanger = TitleChanger(dictionary)
+    val synopsisSynthesizer = SynopsisSynthesizer(System.getenv("CLAUDE_API_KEY"))
+    val semanticAnaliser = SemanticAnaliser(System.getenv("OPEN_AI_KEY"))
+
+    // Generate alternate titles for random film
     var title = ""
-    var titles = emptyList<String>()
-    while (titles.isEmpty()) {
+    var theChosenOne: CandidateTitle? = null
+    var titles: List<CandidateTitle>
+    while (theChosenOne == null) {
         title = getRandomFilm()
         titles = titleChanger.getCandidateTitles(title).toList()
-        if (titles.isEmpty()) println("No good candidates found for: $title")
+        if (titles.isEmpty()) {
+            println("No good candidates found for: $title")
+            continue
+        }
+        println("Chose: $title")
+        val qualifiedNewTitles = semanticAnaliser.filterOutSimilarStrings(titles)
+
+        // Pick one of the titles and generate a blurb for it
+        if (qualifiedNewTitles.isEmpty()) {
+            continue
+        }
+        theChosenOne = qualifiedNewTitles.random()
+        println(theChosenOne.changedTitle)
     }
-    println("Chose: $title. Variations: $titles")
-    val semanticAnaliser = SemanticAnaliser(System.getenv("OPEN_AI_KEY"))
-    val qualifiedNewTitles = semanticAnaliser.filterOutSimilarStrings(title, titles)
-    println(qualifiedNewTitles)
+    val response = synopsisSynthesizer.generateSynopsis(theChosenOne)
+    println(response.blurb)
 }
 
 fun getRandomFilm(): String {

@@ -1,4 +1,4 @@
-package org.example.com.robbiebowman
+package com.robbiebowman
 
 object Utils {
     fun getRowsFromFile(path: String): List<String> {

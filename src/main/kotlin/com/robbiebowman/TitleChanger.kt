@@ -1,16 +1,24 @@
-package org.example.com.robbiebowman
+package com.robbiebowman
 
 import com.robbiebowman.Dictionary
 
+
 internal class TitleChanger(private val dictionary: Dictionary) {
 
-    fun getCandidateTitles(title: String): Set<String> {
+    fun getCandidateTitles(title: String): Set<CandidateTitle> {
         val words = selectWordsToChange(title)
         val newWords = words.map { word -> word to getVariations(word) }
         val newTitles =
             newWords.flatMap { (word, variations) ->
                 variations.map { variation ->
-                    title.replace(word, variation.capitalize())
+                    val newWord = variation.capitalize()
+                    val newTitle = title.replace(word, newWord)
+                    CandidateTitle(
+                        original = title,
+                        changedTitle = newTitle,
+                        originalWord = word,
+                        changedWord = newWord
+                    )
                 }
             }.toSet()
         return newTitles

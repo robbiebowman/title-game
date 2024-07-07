@@ -1,7 +1,7 @@
 package com.robbiebowman
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import org.example.com.robbiebowman.Utils.getRowsFromFile
+import com.robbiebowman.Utils.getRowsFromFile
 
 internal class Dictionary {
 
