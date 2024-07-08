@@ -1,9 +1,7 @@
 package com.robbiebowman
 
-import com.robbiebowman.Dictionary
 
-
-internal class TitleChanger(private val dictionary: Dictionary) {
+internal class TitleChanger(private val dictionary: WordList) {
 
     fun getCandidateTitles(title: String): Set<CandidateTitle> {
         val words = selectWordsToChange(title)

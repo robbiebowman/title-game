@@ -25,6 +25,8 @@ class SynopsisSynthesizer(claudeApiKey: String) {
             
             Make sure not to mention the new or original title, as the game will be someone trying to guess it based
             on the new blurb.
+            
+            Keep the blurbs to 2 or 3 sentences max.
         """.trimIndent())
         .build()
 
