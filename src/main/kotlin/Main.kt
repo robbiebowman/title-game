@@ -10,7 +10,8 @@ fun main() {
 
     val film = generator.generatePretendFilm()
 
-    println(film.blurb)
-    println(film.originalTitle)
-    println(film.newTitle)
+    println(film.blurb.blurb)
+    println(film.blurb.newTitle)
+    println(film.info?.title)
+    println(film.info?.releaseDate)
 }

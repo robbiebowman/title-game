@@ -14,27 +14,30 @@ class PretendFilmGenerator(
     private val synopsisSynthesizer = SynopsisSynthesizer(claudeApiKey)
     private val semanticAnaliser = SemanticAnaliser(openApiKey)
 
-    fun generatePretendFilm(originalFilmTitle: String? = null): Blurb {
-        val original = originalFilmTitle ?: getRandomFilm().title
+    fun generatePretendFilm(originalFilmTitle: String? = null): BlurbAndInfo {
+        var info: FilmInfo? = if (originalFilmTitle == null) getRandomFilm() else null
+        val original = originalFilmTitle ?: info!!.title
 
         // Generate alternate titles for random film
         var title = original
         var theChosenOne: CandidateTitle? = null
         while (theChosenOne == null) {
             val titles = titleChanger.getCandidateTitles(title).toList()
-            val qualifiedNewTitles = if (titles.isNotEmpty()) semanticAnaliser.filterOutSimilarStrings(titles) else emptyList()
+            val qualifiedNewTitles =
+                if (titles.isNotEmpty()) semanticAnaliser.filterOutSimilarStrings(titles) else emptyList()
 
             if (qualifiedNewTitles.isEmpty()) {
                 if (originalFilmTitle != null) {
                     throw Exception("Couldn't find a variation on $originalFilmTitle")
                 }
-                title = getRandomFilm().title
+                info = getRandomFilm()
+                title = info.title
             } else {
                 theChosenOne = qualifiedNewTitles.random()
             }
         }
         val response = synopsisSynthesizer.generateSynopsis(theChosenOne)
-        return response
+        return BlurbAndInfo(response, info)
     }
 
     private fun getRandomFilm(): FilmInfo {
