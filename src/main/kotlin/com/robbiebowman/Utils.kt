@@ -3,7 +3,7 @@ package com.robbiebowman
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.robbiebowman.com.robbiebowman.FilmInfo
 
-object Utils {
+internal object Utils {
     fun getRowsFromFile(path: String): List<String> {
         val resource = this::class.java.classLoader.getResource(path)
         val lines = resource!!.readText().split("\\n".toRegex())

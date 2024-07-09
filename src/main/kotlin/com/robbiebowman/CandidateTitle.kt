@@ -1,6 +1,6 @@
 package com.robbiebowman
 
-data class CandidateTitle(
+internal data class CandidateTitle(
     val original: String,
     val changedTitle: String,
     val originalWord: String,

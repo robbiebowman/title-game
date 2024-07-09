@@ -5,7 +5,7 @@ import com.robbiebowman.claude.MessageContent
 import com.robbiebowman.claude.Role
 import com.robbiebowman.claude.SerializableMessage
 
-class SynopsisSynthesizer(claudeApiKey: String) {
+internal class SynopsisSynthesizer(claudeApiKey: String) {
 
     private val claudeClient = ClaudeClientBuilder()
         .withApiKey(claudeApiKey)
