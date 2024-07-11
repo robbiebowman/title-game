@@ -13,7 +13,7 @@ internal class SemanticAnaliser(openAiKey: String) {
 
     fun filterOutSimilarStrings(
         candidates: List<CandidateTitle>,
-        maximumSimilarity: Double = 0.6
+        maximumSimilarity: Double = 0.5
     ): List<CandidateTitle> {
         val originals = candidates.map { it.originalWord.lowercase() }.distinct()
         val inputs = originals + candidates.map { it.changedWord.lowercase() }

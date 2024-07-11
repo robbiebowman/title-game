@@ -5,19 +5,20 @@ import com.robbiebowman.claude.MessageContent
 import com.robbiebowman.claude.Role
 import com.robbiebowman.claude.SerializableMessage
 
-internal class SynopsisSynthesizer(claudeApiKey: String) {
+internal class SynopsisSynthesizer(claudeApiKey: String, customPrompt: String? = null) {
 
     private val claudeClient = ClaudeClientBuilder()
         .withApiKey(claudeApiKey)
         .withModel("claude-3-5-sonnet-20240620")
         .withTool(::writeImaginaryFilmBlurb)
-        .withSystemPrompt("""
+        .withSystemPrompt(customPrompt ?: """
             You are a movie expert helping the user generate pretend film synopses. The user will provide two film titles:
             a real title of an actual film, followed by that same film with one letter changed. Your job is to write
             a very brief, new synopsis bearing in mind the changed title such that someone reading just the new blurb
             could make a guess as to the new title.
             
-            Make sure to include strong hints to the original film so the title is guessable.
+            Make sure to include hints to the original film so the title is guessable. Don't talk explicitly about how
+            the new plot differs from the original. 
             
             For example: "Fight Club -> Night Club"
             A good answer would be: "An insomniac office worker and Tyler Durden discovers an underground society where white-collar

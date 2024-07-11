@@ -7,11 +7,12 @@ import com.robbiebowman.WordList
 
 class PretendFilmGenerator(
     claudeApiKey: String,
-    openApiKey: String
+    openApiKey: String,
+    customPrompt: String? = null
 ) {
     private val dictionary = WordList()
     private val titleChanger = TitleChanger(dictionary)
-    private val synopsisSynthesizer = SynopsisSynthesizer(claudeApiKey)
+    private val synopsisSynthesizer = SynopsisSynthesizer(claudeApiKey, customPrompt)
     private val semanticAnaliser = SemanticAnaliser(openApiKey)
 
     fun generatePretendFilm(originalFilmTitle: String? = null): BlurbAndInfo {
