@@ -24,7 +24,11 @@ internal class TitleChanger(private val dictionary: WordList) {
 
     private fun selectWordsToChange(title: String): List<String> {
         val words = title.split(' ', ',', '-', '.', ';', ':').map { it.trim { !it.isLetter() } }
-        return words.filter { !dictionary.ignoredWords.contains(it.lowercase()) && it.length > 3 }
+        return words.filter {
+            !dictionary.ignoredWords.contains(it.lowercase())
+                && it.length > 3
+                &&  it.length.toDouble() / title.length.toDouble() >= 0.2
+        }
     }
 
     private fun getVariations(word: String): List<String> {

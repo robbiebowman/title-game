@@ -14,6 +14,7 @@ class PretendFilmGenerator(
     private val titleChanger = TitleChanger(dictionary)
     private val synopsisSynthesizer = SynopsisSynthesizer(claudeApiKey, customPrompt)
     private val semanticAnaliser = SemanticAnaliser(openApiKey)
+    private val titleRater = TitleRater(claudeApiKey)
 
     fun generatePretendFilm(originalFilmTitle: String? = null): BlurbAndInfo {
         var info: FilmInfo? = if (originalFilmTitle == null) getRandomFilm() else null
@@ -34,7 +35,15 @@ class PretendFilmGenerator(
                 info = getRandomFilm()
                 title = info.title
             } else {
-                theChosenOne = qualifiedNewTitles.random()
+                val ratings = titleRater.rateTitles(qualifiedNewTitles).zip(qualifiedNewTitles)
+                val sufficientlyExcellentTitles =
+                    ratings.filter { (rating, _) -> rating.rating == Rating.GOOD || rating.rating == Rating.EXCELLENT }
+                if (sufficientlyExcellentTitles.isEmpty()) {
+                    info = getRandomFilm()
+                    title = info.title
+                } else {
+                    theChosenOne = sufficientlyExcellentTitles.maxBy { it.first.rating.ordinal }.second
+                }
             }
         }
         val response = synopsisSynthesizer.generateSynopsis(theChosenOne)
@@ -43,7 +52,7 @@ class PretendFilmGenerator(
 
     private fun getRandomFilm(): FilmInfo {
         return Utils.getFilmInfoFromCsv("top-1000-with-imdb-info.csv")
-            .take(500) // File is organised by popularity, so selecting top 500 most popular
+            .take(700) // File is organised by popularity, so selecting most popular
             .random()
     }
 }
