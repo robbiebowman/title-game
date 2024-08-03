@@ -3,36 +3,45 @@ package com.robbiebowman
 
 internal class TitleChanger(private val dictionary: WordList) {
 
-    fun getCandidateTitles(title: String): Set<CandidateTitle> {
+    fun getCandidateTitles(title: String, distance: Int = 2): Set<TitleVariation> {
         val words = selectWordsToChange(title)
-        val newWords = words.map { word -> word to getVariations(word) }
-        val newTitles =
-            newWords.flatMap { (word, variations) ->
-                variations.map { variation ->
-                    val newWord = variation.capitalize()
-                    val newTitle = title.replace(word, newWord)
-                    CandidateTitle(
-                        original = title,
-                        changedTitle = newTitle,
-                        originalWord = word,
-                        changedWord = newWord
-                    )
-                }
-            }.toSet()
-        return newTitles
+        val newTitles = bfsTitle(TitleVariation(title, words, emptyList()), 0, distance)
+        return newTitles.toSet()
+    }
+
+    private fun bfsTitle(node: TitleVariation, depth: Int, maxDistance: Int): List<TitleVariation> {
+        if (depth >= node.originalWords.size) {
+            return emptyList()
+        }
+        val variations = getVariations(node.originalWords[depth], maxDistance - node.distance)
+        val (finished, unfinished) = variations.map { (variation, distance) ->
+            node.copy(
+                variations = node.variations +
+                        Variation(
+                            originalWord = node.originalWords[node.variations.size],
+                            newWord = variation,
+                            distance = distance
+                        )
+            )
+        }.partition { it.distance >= maxDistance }
+
+        return finished + unfinished.flatMap { bfsTitle(it, depth + 1, maxDistance) }
     }
 
     private fun selectWordsToChange(title: String): List<String> {
         val words = title.split(' ', ',', '-', '.', ';', ':').map { it.trim { !it.isLetter() } }
         return words.filter {
             !dictionary.ignoredWords.contains(it.lowercase())
-                && it.length > 3
-                &&  it.length.toDouble() / title.length.toDouble() >= 0.2
+                    && it.length > 3
         }
     }
 
-    private fun getVariations(word: String): List<String> {
-        return dictionary.words.filter { levenshteinDistance(word.lowercase(), it.lowercase()) == 1 }
+    private fun getVariations(word: String, maxDistance: Int): List<Pair<String, Int>> {
+        return dictionary.words.mapNotNull {
+            val distance = levenshteinDistance(word.lowercase(), it.lowercase())
+            val inDistanceRange = distance <= maxDistance
+            if (inDistanceRange) it to distance else null
+        }
     }
 
     private fun levenshteinDistance(a: String, b: String): Int {

@@ -12,11 +12,12 @@ internal class SemanticAnaliser(openAiKey: String) {
     private val gpt = OpenAiService(openAiKey, Duration.ofSeconds(30))
 
     fun filterOutSimilarStrings(
-        candidates: List<CandidateTitle>,
+        candidates: List<TitleVariation>,
         maximumSimilarity: Double = 0.5
-    ): List<CandidateTitle> {
-        val originals = candidates.map { it.originalWord.lowercase() }.distinct()
-        val inputs = originals + candidates.map { it.changedWord.lowercase() }
+    ): List<TitleVariation> {
+        val variations = candidates.flatMap { it.variations }
+        val originals = variations.map { it.originalWord.lowercase() }
+        val inputs = originals + variations.map { it.newWord.lowercase() }
         val response = gpt.createEmbeddings(
             EmbeddingRequest(
                 "text-embedding-3-large",
@@ -25,7 +26,7 @@ internal class SemanticAnaliser(openAiKey: String) {
             )
         )
         val sourceEmbeddings = response.data.take(originals.size).zip(originals).associate { it.second to it.first }
-        val candidateEmbeddings = candidates.zip(response.data.drop(originals.size))
+        val candidateEmbeddings = variations.zip(response.data.drop(originals.size))
         val candidateDiffs = candidateEmbeddings.map { (word, embedding) ->
             word to cosineSimilarity(
                 vec1 = sourceEmbeddings[word.originalWord.lowercase()]!!.embedding,
@@ -35,7 +36,7 @@ internal class SemanticAnaliser(openAiKey: String) {
         val qualifiers = candidateDiffs.mapNotNull { (word, similarity) ->
             if (similarity > maximumSimilarity) null else word
         }
-        return qualifiers
+        return candidates.filter { qualifiers.containsAll(it.variations) }
     }
 
     private fun cosineSimilarity(vec1: List<Double>, vec2: List<Double>): Double {

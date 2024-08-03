@@ -16,15 +16,15 @@ class PretendFilmGenerator(
     private val semanticAnaliser = SemanticAnaliser(openApiKey)
     private val titleRater = TitleRater(claudeApiKey)
 
-    fun generatePretendFilm(originalFilmTitle: String? = null): BlurbAndInfo {
+    fun generatePretendFilm(distance: Int, originalFilmTitle: String? = null): BlurbAndInfo {
         var info: FilmInfo? = if (originalFilmTitle == null) getRandomFilm() else null
         val original = originalFilmTitle ?: info!!.title
 
         // Generate alternate titles for random film
         var title = original
-        var theChosenOne: CandidateTitle? = null
+        var theChosenOne: TitleVariation? = null
         while (theChosenOne == null) {
-            val titles = titleChanger.getCandidateTitles(title).toList()
+            val titles = titleChanger.getCandidateTitles(title, distance).toList()
             val qualifiedNewTitles =
                 if (titles.isNotEmpty()) semanticAnaliser.filterOutSimilarStrings(titles) else emptyList()
 
@@ -42,7 +42,7 @@ class PretendFilmGenerator(
                     info = getRandomFilm()
                     title = info.title
                 } else {
-                    theChosenOne = sufficientlyExcellentTitles.maxBy { it.first.rating.ordinal }.second
+                    theChosenOne = sufficientlyExcellentTitles.random().second
                 }
             }
         }
