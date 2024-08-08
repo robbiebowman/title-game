@@ -6,6 +6,8 @@ import com.robbiebowman.claude.ClaudeClientBuilder
 import com.robbiebowman.claude.MessageContent
 import com.robbiebowman.claude.Role
 import com.robbiebowman.claude.SerializableMessage
+import okhttp3.OkHttpClient
+import okhttp3.OkHttpClient.Builder
 
 internal class TitleRater(claudeApiKey: String) {
 
