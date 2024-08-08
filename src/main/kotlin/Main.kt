@@ -8,7 +8,7 @@ fun main() {
         openApiKey = System.getenv("OPEN_AI_KEY") // Used for embeddings of new vs old title
     )
 
-    val film = generator.generatePretendFilm()
+    val film = generator.generatePretendFilm(1)
 
     println(film.blurb.blurb)
     println(film.blurb.newTitle)

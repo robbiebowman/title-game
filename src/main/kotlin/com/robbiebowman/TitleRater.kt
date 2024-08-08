@@ -1,10 +1,13 @@
 package com.robbiebowman.com.robbiebowman
 
 import com.robbiebowman.CandidateTitle
+import com.robbiebowman.TitleVariation
 import com.robbiebowman.claude.ClaudeClientBuilder
 import com.robbiebowman.claude.MessageContent
 import com.robbiebowman.claude.Role
 import com.robbiebowman.claude.SerializableMessage
+import okhttp3.OkHttpClient
+import okhttp3.OkHttpClient.Builder
 
 internal class TitleRater(claudeApiKey: String) {
 
@@ -26,7 +29,7 @@ internal class TitleRater(claudeApiKey: String) {
         """.trimIndent())
         .build()
 
-    fun rateTitles(titles: List<CandidateTitle>): List<TitleRating> {
+    fun rateTitles(titles: List<TitleVariation>): List<TitleRating> {
         val response = claudeClient.getChatCompletion(
             listOf(
                 SerializableMessage(
@@ -35,7 +38,7 @@ internal class TitleRater(claudeApiKey: String) {
                         MessageContent.TextContent(
                         """
                             Can you rate these title transformations?
-                            ${titles.joinToString("\\n") { "Original: '${it.original}', new title: '${it.changedTitle}'. " }}
+                            ${titles.joinToString("\\n") { "Original: '${it.originalTitle}', new title: '${it.newTitle}'. " }}
                         """.trimIndent()
                     ))
                 )

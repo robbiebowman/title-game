@@ -28,15 +28,15 @@ internal class SynopsisSynthesizer(claudeApiKey: String, customPrompt: String? =
             """.trimIndent())
         .build()
 
-    fun generateSynopsis(candidateTitle: CandidateTitle): Blurb {
+    fun generateSynopsis(candidateTitle: TitleVariation): Blurb {
         val response = claudeClient.getChatCompletion(
             listOf(
                 SerializableMessage(
                     Role.User,
                     listOf(MessageContent.TextContent(
                         """
-                            Original title: ${candidateTitle.original},
-                            New title: ${candidateTitle.changedTitle}
+                            Original title: ${candidateTitle.originalTitle},
+                            New title: ${candidateTitle.newTitle}
                         """.trimIndent()
                     ))
                 )
