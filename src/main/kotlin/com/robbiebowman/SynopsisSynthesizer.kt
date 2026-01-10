@@ -9,7 +9,7 @@ internal class SynopsisSynthesizer(claudeApiKey: String, customPrompt: String? =
 
     private val claudeClient = ClaudeClientBuilder()
         .withApiKey(claudeApiKey)
-        .withModel("claude-3-5-sonnet-20240620")
+        .withModel("claude-opus-4-5")
         .withTool(::writeImaginaryFilmBlurb)
         .withSystemPrompt(customPrompt ?: """
             You are a movie expert helping the user generate pretend film synopses. The user will provide two film titles:
