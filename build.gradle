@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.robbiebowman'
-version = '1.0.0'
+version = '1.0.7'
 
 repositories {
     mavenCentral()
