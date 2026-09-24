@@ -9,7 +9,7 @@ internal class SynopsisSynthesizer(claudeApiKey: String, customPrompt: String? =
 
     private val claudeClient = ClaudeClientBuilder()
         .withApiKey(claudeApiKey)
-        .withModel("claude-sonnet-5")
+        .withModel("claude-opus-5-5")
         .withMaxTokens(4096)
         .withMapper(claudeMapper())
         .withTool(::writeImaginaryFilmBlurb)

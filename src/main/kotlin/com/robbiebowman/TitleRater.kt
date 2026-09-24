@@ -14,7 +14,7 @@ internal class TitleRater(claudeApiKey: String) {
 
     private val claudeClient = ClaudeClientBuilder()
         .withApiKey(claudeApiKey)
-        .withModel("claude-sonnet-5")
+        .withModel("claude-opus-5-5")
         .withMaxTokens(8192)
         .withMapper(claudeMapper())
         .withTool(::saveTitlesRatings)
