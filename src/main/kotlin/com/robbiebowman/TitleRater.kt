@@ -13,7 +13,8 @@ internal class TitleRater(claudeApiKey: String) {
 
     private val claudeClient = ClaudeClientBuilder()
         .withApiKey(claudeApiKey)
-        .withModel("claude-opus-4-5")
+        .withModel("claude-sonnet-5")
+        .withMaxTokens(8192)
         .withTool(::saveTitlesRatings)
         .withSystemPrompt("""
             You are a film expert helping the user rate a bunch of altered movie titles based on how good the new titles
