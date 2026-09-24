@@ -11,8 +11,9 @@ internal class SynopsisSynthesizer(claudeApiKey: String, customPrompt: String? =
         .withApiKey(claudeApiKey)
         .withModel("claude-sonnet-5")
         .withMaxTokens(4096)
+        .withMapper(claudeMapper())
         .withTool(::writeImaginaryFilmBlurb)
-        .withSystemPrompt(customPrompt ?: """
+        .withSystemPrompt((customPrompt ?: """
             You are a movie expert helping the user generate pretend film synopses. The user will provide two film titles:
             a real title of an actual film, followed by that same film with one letter changed. Your job is to write
             a very brief, new synopsis bearing in mind the changed title such that someone reading just the new blurb
@@ -26,7 +27,7 @@ internal class SynopsisSynthesizer(claudeApiKey: String, customPrompt: String? =
             on the new blurb. Exaggerate the elements of the plot relevant to the new title.
             
             Keep the blurbs to 2 sentences max.
-            """.trimIndent())
+            """.trimIndent()) + "\nReturn the blurb by calling writeImaginaryFilmBlurb.")
         .build()
 
     fun generateSynopsis(candidateTitle: TitleVariation): Blurb {
