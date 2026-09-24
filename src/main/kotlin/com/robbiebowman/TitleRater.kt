@@ -2,6 +2,7 @@ package com.robbiebowman.com.robbiebowman
 
 import com.robbiebowman.CandidateTitle
 import com.robbiebowman.TitleVariation
+import com.robbiebowman.claudeMapper
 import com.robbiebowman.claude.ClaudeClientBuilder
 import com.robbiebowman.claude.MessageContent
 import com.robbiebowman.claude.Role
@@ -13,7 +14,9 @@ internal class TitleRater(claudeApiKey: String) {
 
     private val claudeClient = ClaudeClientBuilder()
         .withApiKey(claudeApiKey)
-        .withModel("claude-opus-4-5")
+        .withModel("claude-opus-5-5")
+        .withMaxTokens(8192)
+        .withMapper(claudeMapper())
         .withTool(::saveTitlesRatings)
         .withSystemPrompt("""
             You are a film expert helping the user rate a bunch of altered movie titles based on how good the new titles
@@ -26,6 +29,8 @@ internal class TitleRater(claudeApiKey: String) {
             The Secret Life of Pets -> The Secret Life of Pts = BAD (Pts is a weird word and the title is nonsensical)
             Dune: Part Two -> Dune: Port Two = FINE (Makes sense but doesn't make a fun new film)
             Apocalypse Now -> Apocalypse Snow = GOOD (Sounds like a film and makes sense. Isn't hilarious but that's fine)
+
+            Return the ratings by calling saveTitlesRatings.
         """.trimIndent())
         .build()
 
